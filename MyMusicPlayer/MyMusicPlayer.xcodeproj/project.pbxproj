@@ -14,6 +14,8 @@
 		74F9BF822201CACB00085E73 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 74F9BF802201CACB00085E73 /* LaunchScreen.storyboard */; };
 		74F9BF8D2201CACB00085E73 /* MyMusicPlayerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74F9BF8C2201CACB00085E73 /* MyMusicPlayerTests.swift */; };
 		74F9BF982201CACB00085E73 /* MyMusicPlayerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74F9BF972201CACB00085E73 /* MyMusicPlayerUITests.swift */; };
+		74F9BFAA2202DA3800085E73 /* MyAccountController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74F9BFA92202DA3800085E73 /* MyAccountController.swift */; };
+		74F9BFAC22030E9E00085E73 /* PlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74F9BFAB22030E9E00085E73 /* PlayerViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +49,8 @@
 		74F9BF932201CACB00085E73 /* MyMusicPlayerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MyMusicPlayerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		74F9BF972201CACB00085E73 /* MyMusicPlayerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyMusicPlayerUITests.swift; sourceTree = "<group>"; };
 		74F9BF992201CACB00085E73 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		74F9BFA92202DA3800085E73 /* MyAccountController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyAccountController.swift; sourceTree = "<group>"; };
+		74F9BFAB22030E9E00085E73 /* PlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -97,8 +101,10 @@
 		74F9BF762201CACA00085E73 /* MyMusicPlayer */ = {
 			isa = PBXGroup;
 			children = (
+				74F9BFA82202D85B00085E73 /* Controller */,
+				74F9BFA72202D84F00085E73 /* View */,
+				74F9BFA52202D82800085E73 /* Model */,
 				74F9BF772201CACA00085E73 /* AppDelegate.swift */,
-				74F9BF792201CACA00085E73 /* ViewController.swift */,
 				74F9BF7B2201CACA00085E73 /* Main.storyboard */,
 				74F9BF7E2201CACB00085E73 /* Assets.xcassets */,
 				74F9BF802201CACB00085E73 /* LaunchScreen.storyboard */,
@@ -123,6 +129,30 @@
 				74F9BF992201CACB00085E73 /* Info.plist */,
 			);
 			path = MyMusicPlayerUITests;
+			sourceTree = "<group>";
+		};
+		74F9BFA52202D82800085E73 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		74F9BFA72202D84F00085E73 /* View */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		74F9BFA82202D85B00085E73 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				74F9BF792201CACA00085E73 /* ViewController.swift */,
+				74F9BFA92202DA3800085E73 /* MyAccountController.swift */,
+				74F9BFAB22030E9E00085E73 /* PlayerViewController.swift */,
+			);
+			path = Controller;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -257,7 +287,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				74F9BF7A2201CACA00085E73 /* ViewController.swift in Sources */,
+				74F9BFAC22030E9E00085E73 /* PlayerViewController.swift in Sources */,
 				74F9BF782201CACA00085E73 /* AppDelegate.swift in Sources */,
+				74F9BFAA2202DA3800085E73 /* MyAccountController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
