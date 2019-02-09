@@ -10,14 +10,19 @@
 import Foundation
 import Alamofire
 struct DetailMusicId {
-    static var id = 0
+    static var id = 2651879387
 }
+
+
 struct DetailMusicHelper {
-    static func getDetailMusic(success: @escaping (DetailMusic)->(), failure: @escaping (Error)->()) {
-        var detailMusicUrl = "http://localhost:3000/playlist/detail?id=\(DetailMusicId.id)"
-        Helper.dataManager(url: detailMusicUrl, success: { dic in
-            if let data = try? JSONSerialization.data(withJSONObject: dic, options: JSONSerialization.WritingOptions.init(rawValue: 0)), let detaileMusic = try? DetailMusic(data: data) {
-                success(detaileMusic)
+    static func getMusicList(success: @escaping (DetailMusic)->(), failure: @escaping (Error)->()) {
+        var MusicListUrl = "http://localhost:3000/playlist/detail?id=\(DetailMusicId.id)"
+        Helper.dataManager(url: MusicListUrl, success: { dic in
+            if let data = try? JSONSerialization.data(withJSONObject: dic, options: JSONSerialization.WritingOptions.init(rawValue: 0)), let musicList = try? DetailMusic(data: data) {
+                success(musicList)
+                print("ifif")
+            }else {
+                print("else")
             }
         }, failure: { _ in
             
@@ -25,12 +30,88 @@ struct DetailMusicHelper {
     }
 }
 
+
 struct DetailMusic: Codable {
-    let playlist: Playlist
+    let playlist: DetailPlaylist
     let code: Int
     let privileges: [Privilege]
 }
 
+struct DetailPlaylist: Codable {
+    let subscribers: [DetailCreator]
+    let subscribed: Bool
+    let creator: DetailCreator
+    let tracks: [Track]
+    let trackIDS: [TrackID]
+    let subscribedCount, cloudTrackCount: Int
+    let newImported: Bool
+    let privacy, createTime: Int
+    let highQuality: Bool
+    let userID, updateTime: Int
+    let coverImgID: Double
+    let specialType, trackCount: Int
+    let commentThreadID: String
+    let trackUpdateTime, playCount: Int
+    let coverImgURL: String
+    let adType, trackNumberUpdateTime: Int
+    let ordered: Bool
+    let tags: [String]
+    let description: String
+    let status: Int
+    let name: String
+    let id, shareCount: Int
+    let coverImgIDStr: String
+    let commentCount: Int
+    
+    enum CodingKeys: String, CodingKey {
+        case subscribers, subscribed, creator, tracks
+        case trackIDS = "trackIds"
+        case subscribedCount, cloudTrackCount, newImported, privacy, createTime, highQuality
+        case userID = "userId"
+        case updateTime
+        case coverImgID = "coverImgId"
+        case specialType, trackCount
+        case commentThreadID = "commentThreadId"
+        case trackUpdateTime, playCount
+        case coverImgURL = "coverImgUrl"
+        case adType, trackNumberUpdateTime, ordered, tags, description, status, name, id, shareCount
+        case coverImgIDStr = "coverImgId_str"
+        case commentCount
+    }
+}
+
+struct DetailCreator: Codable {
+    let defaultAvatar: Bool
+    let province, authStatus: Int
+    let followed: Bool
+    let avatarURL: String
+    let accountStatus, gender, city, birthday: Int
+    let userID, userType: Int
+    let nickname, signature, description, detailDescription: String
+    let avatarImgID, backgroundImgID: Double
+    let backgroundURL: String
+    let authority: Int
+    let mutual: Bool
+    let expertTags, experts: JSONNull?
+    let djStatus, vipType: Int
+    let remarkName: JSONNull?
+    let avatarImgIDStr, backgroundImgIDStr, creatorAvatarImgIDStr: String
+    
+    enum CodingKeys: String, CodingKey {
+        case defaultAvatar, province, authStatus, followed
+        case avatarURL = "avatarUrl"
+        case accountStatus, gender, city, birthday
+        case userID = "userId"
+        case userType, nickname, signature, description, detailDescription
+        case avatarImgID = "avatarImgId"
+        case backgroundImgID = "backgroundImgId"
+        case backgroundURL = "backgroundUrl"
+        case authority, mutual, expertTags, experts, djStatus, vipType, remarkName
+        case avatarImgIDStr = "avatarImgIdStr"
+        case backgroundImgIDStr = "backgroundImgIdStr"
+        case creatorAvatarImgIDStr = "avatarImgId_str"
+    }
+}
 
 struct TrackID: Codable {
     let id, v: Int
@@ -130,7 +211,7 @@ extension DetailMusic {
     }
     
     func with(
-        playlist: Playlist? = nil,
+        playlist: DetailPlaylist? = nil,
         code: Int? = nil,
         privileges: [Privilege]? = nil
         ) -> DetailMusic {
@@ -150,8 +231,185 @@ extension DetailMusic {
     }
 }
 
+extension DetailPlaylist {
+    init(data: Data) throws {
+        self = try newJSONDecoder().decode(DetailPlaylist.self, from: data)
+    }
+    
+    init(_ json: String, using encoding: String.Encoding = .utf8) throws {
+        guard let data = json.data(using: encoding) else {
+            throw NSError(domain: "JSONDecoding", code: 0, userInfo: nil)
+        }
+        try self.init(data: data)
+    }
+    
+    init(fromURL url: URL) throws {
+        try self.init(data: try Data(contentsOf: url))
+    }
+    
+    func with(
+        subscribers: [DetailCreator]? = nil,
+        subscribed: Bool? = nil,
+        creator: DetailCreator? = nil,
+        tracks: [Track]? = nil,
+        trackIDS: [TrackID]? = nil,
+        subscribedCount: Int? = nil,
+        cloudTrackCount: Int? = nil,
+        newImported: Bool? = nil,
+        privacy: Int? = nil,
+        createTime: Int? = nil,
+        highQuality: Bool? = nil,
+        userID: Int? = nil,
+        updateTime: Int? = nil,
+        coverImgID: Double? = nil,
+        specialType: Int? = nil,
+        trackCount: Int? = nil,
+        commentThreadID: String? = nil,
+        trackUpdateTime: Int? = nil,
+        playCount: Int? = nil,
+        coverImgURL: String? = nil,
+        adType: Int? = nil,
+        trackNumberUpdateTime: Int? = nil,
+        ordered: Bool? = nil,
+        tags: [String]? = nil,
+        description: String? = nil,
+        status: Int? = nil,
+        name: String? = nil,
+        id: Int? = nil,
+        shareCount: Int? = nil,
+        coverImgIDStr: String? = nil,
+        commentCount: Int? = nil
+        ) -> DetailPlaylist {
+        return DetailPlaylist(
+            subscribers: subscribers ?? self.subscribers,
+            subscribed: subscribed ?? self.subscribed,
+            creator: creator ?? self.creator,
+            tracks: tracks ?? self.tracks,
+            trackIDS: trackIDS ?? self.trackIDS,
+            subscribedCount: subscribedCount ?? self.subscribedCount,
+            cloudTrackCount: cloudTrackCount ?? self.cloudTrackCount,
+            newImported: newImported ?? self.newImported,
+            privacy: privacy ?? self.privacy,
+            createTime: createTime ?? self.createTime,
+            highQuality: highQuality ?? self.highQuality,
+            userID: userID ?? self.userID,
+            updateTime: updateTime ?? self.updateTime,
+            coverImgID: coverImgID ?? self.coverImgID,
+            specialType: specialType ?? self.specialType,
+            trackCount: trackCount ?? self.trackCount,
+            commentThreadID: commentThreadID ?? self.commentThreadID,
+            trackUpdateTime: trackUpdateTime ?? self.trackUpdateTime,
+            playCount: playCount ?? self.playCount,
+            coverImgURL: coverImgURL ?? self.coverImgURL,
+            adType: adType ?? self.adType,
+            trackNumberUpdateTime: trackNumberUpdateTime ?? self.trackNumberUpdateTime,
+            ordered: ordered ?? self.ordered,
+            tags: tags ?? self.tags,
+            description: description ?? self.description,
+            status: status ?? self.status,
+            name: name ?? self.name,
+            id: id ?? self.id,
+            shareCount: shareCount ?? self.shareCount,
+            coverImgIDStr: coverImgIDStr ?? self.coverImgIDStr,
+            commentCount: commentCount ?? self.commentCount
+        )
+    }
+    
+    func jsonData() throws -> Data {
+        return try newJSONEncoder().encode(self)
+    }
+    
+    func jsonString(encoding: String.Encoding = .utf8) throws -> String? {
+        return String(data: try self.jsonData(), encoding: encoding)
+    }
+}
 
-
+extension DetailCreator {
+    init(data: Data) throws {
+        self = try newJSONDecoder().decode(DetailCreator.self, from: data)
+    }
+    
+    init(_ json: String, using encoding: String.Encoding = .utf8) throws {
+        guard let data = json.data(using: encoding) else {
+            throw NSError(domain: "JSONDecoding", code: 0, userInfo: nil)
+        }
+        try self.init(data: data)
+    }
+    
+    init(fromURL url: URL) throws {
+        try self.init(data: try Data(contentsOf: url))
+    }
+    
+    func with(
+        defaultAvatar: Bool? = nil,
+        province: Int? = nil,
+        authStatus: Int? = nil,
+        followed: Bool? = nil,
+        avatarURL: String? = nil,
+        accountStatus: Int? = nil,
+        gender: Int? = nil,
+        city: Int? = nil,
+        birthday: Int? = nil,
+        userID: Int? = nil,
+        userType: Int? = nil,
+        nickname: String? = nil,
+        signature: String? = nil,
+        description: String? = nil,
+        detailDescription: String? = nil,
+        avatarImgID: Double? = nil,
+        backgroundImgID: Double? = nil,
+        backgroundURL: String? = nil,
+        authority: Int? = nil,
+        mutual: Bool? = nil,
+        expertTags: JSONNull?? = nil,
+        experts: JSONNull?? = nil,
+        djStatus: Int? = nil,
+        vipType: Int? = nil,
+        remarkName: JSONNull?? = nil,
+        avatarImgIDStr: String? = nil,
+        backgroundImgIDStr: String? = nil,
+        creatorAvatarImgIDStr: String? = nil
+        ) -> DetailCreator {
+        return DetailCreator(
+            defaultAvatar: defaultAvatar ?? self.defaultAvatar,
+            province: province ?? self.province,
+            authStatus: authStatus ?? self.authStatus,
+            followed: followed ?? self.followed,
+            avatarURL: avatarURL ?? self.avatarURL,
+            accountStatus: accountStatus ?? self.accountStatus,
+            gender: gender ?? self.gender,
+            city: city ?? self.city,
+            birthday: birthday ?? self.birthday,
+            userID: userID ?? self.userID,
+            userType: userType ?? self.userType,
+            nickname: nickname ?? self.nickname,
+            signature: signature ?? self.signature,
+            description: description ?? self.description,
+            detailDescription: detailDescription ?? self.detailDescription,
+            avatarImgID: avatarImgID ?? self.avatarImgID,
+            backgroundImgID: backgroundImgID ?? self.backgroundImgID,
+            backgroundURL: backgroundURL ?? self.backgroundURL,
+            authority: authority ?? self.authority,
+            mutual: mutual ?? self.mutual,
+            expertTags: expertTags ?? self.expertTags,
+            experts: experts ?? self.experts,
+            djStatus: djStatus ?? self.djStatus,
+            vipType: vipType ?? self.vipType,
+            remarkName: remarkName ?? self.remarkName,
+            avatarImgIDStr: avatarImgIDStr ?? self.avatarImgIDStr,
+            backgroundImgIDStr: backgroundImgIDStr ?? self.backgroundImgIDStr,
+            creatorAvatarImgIDStr: creatorAvatarImgIDStr ?? self.creatorAvatarImgIDStr
+        )
+    }
+    
+    func jsonData() throws -> Data {
+        return try newJSONEncoder().encode(self)
+    }
+    
+    func jsonString(encoding: String.Encoding = .utf8) throws -> String? {
+        return String(data: try self.jsonData(), encoding: encoding)
+    }
+}
 
 extension TrackID {
     init(data: Data) throws {
@@ -468,3 +726,260 @@ extension Privilege {
         return String(data: try self.jsonData(), encoding: encoding)
     }
 }
+
+// MARK: Encode/decode helpers
+
+class JSONNull: Codable, Hashable {
+    
+    public static func == (lhs: JSONNull, rhs: JSONNull) -> Bool {
+        return true
+    }
+    
+    public var hashValue: Int {
+        return 0
+    }
+    
+    public init() {}
+    
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        if !container.decodeNil() {
+            throw DecodingError.typeMismatch(JSONNull.self, DecodingError.Context(codingPath: decoder.codingPath, debugDescription: "Wrong type for JSONNull"))
+        }
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encodeNil()
+    }
+}
+
+class JSONCodingKey: CodingKey {
+    let key: String
+    
+    required init?(intValue: Int) {
+        return nil
+    }
+    
+    required init?(stringValue: String) {
+        key = stringValue
+    }
+    
+    var intValue: Int? {
+        return nil
+    }
+    
+    var stringValue: String {
+        return key
+    }
+}
+
+class JSONAny: Codable {
+    let value: Any
+    
+    static func decodingError(forCodingPath codingPath: [CodingKey]) -> DecodingError {
+        let context = DecodingError.Context(codingPath: codingPath, debugDescription: "Cannot decode JSONAny")
+        return DecodingError.typeMismatch(JSONAny.self, context)
+    }
+    
+    static func encodingError(forValue value: Any, codingPath: [CodingKey]) -> EncodingError {
+        let context = EncodingError.Context(codingPath: codingPath, debugDescription: "Cannot encode JSONAny")
+        return EncodingError.invalidValue(value, context)
+    }
+    
+    static func decode(from container: SingleValueDecodingContainer) throws -> Any {
+        if let value = try? container.decode(Bool.self) {
+            return value
+        }
+        if let value = try? container.decode(Int64.self) {
+            return value
+        }
+        if let value = try? container.decode(Double.self) {
+            return value
+        }
+        if let value = try? container.decode(String.self) {
+            return value
+        }
+        if container.decodeNil() {
+            return JSONNull()
+        }
+        throw decodingError(forCodingPath: container.codingPath)
+    }
+    
+    static func decode(from container: inout UnkeyedDecodingContainer) throws -> Any {
+        if let value = try? container.decode(Bool.self) {
+            return value
+        }
+        if let value = try? container.decode(Int64.self) {
+            return value
+        }
+        if let value = try? container.decode(Double.self) {
+            return value
+        }
+        if let value = try? container.decode(String.self) {
+            return value
+        }
+        if let value = try? container.decodeNil() {
+            if value {
+                return JSONNull()
+            }
+        }
+        if var container = try? container.nestedUnkeyedContainer() {
+            return try decodeArray(from: &container)
+        }
+        if var container = try? container.nestedContainer(keyedBy: JSONCodingKey.self) {
+            return try decodeDictionary(from: &container)
+        }
+        throw decodingError(forCodingPath: container.codingPath)
+    }
+    
+    static func decode(from container: inout KeyedDecodingContainer<JSONCodingKey>, forKey key: JSONCodingKey) throws -> Any {
+        if let value = try? container.decode(Bool.self, forKey: key) {
+            return value
+        }
+        if let value = try? container.decode(Int64.self, forKey: key) {
+            return value
+        }
+        if let value = try? container.decode(Double.self, forKey: key) {
+            return value
+        }
+        if let value = try? container.decode(String.self, forKey: key) {
+            return value
+        }
+        if let value = try? container.decodeNil(forKey: key) {
+            if value {
+                return JSONNull()
+            }
+        }
+        if var container = try? container.nestedUnkeyedContainer(forKey: key) {
+            return try decodeArray(from: &container)
+        }
+        if var container = try? container.nestedContainer(keyedBy: JSONCodingKey.self, forKey: key) {
+            return try decodeDictionary(from: &container)
+        }
+        throw decodingError(forCodingPath: container.codingPath)
+    }
+    
+    static func decodeArray(from container: inout UnkeyedDecodingContainer) throws -> [Any] {
+        var arr: [Any] = []
+        while !container.isAtEnd {
+            let value = try decode(from: &container)
+            arr.append(value)
+        }
+        return arr
+    }
+    
+    static func decodeDictionary(from container: inout KeyedDecodingContainer<JSONCodingKey>) throws -> [String: Any] {
+        var dict = [String: Any]()
+        for key in container.allKeys {
+            let value = try decode(from: &container, forKey: key)
+            dict[key.stringValue] = value
+        }
+        return dict
+    }
+    
+    static func encode(to container: inout UnkeyedEncodingContainer, array: [Any]) throws {
+        for value in array {
+            if let value = value as? Bool {
+                try container.encode(value)
+            } else if let value = value as? Int64 {
+                try container.encode(value)
+            } else if let value = value as? Double {
+                try container.encode(value)
+            } else if let value = value as? String {
+                try container.encode(value)
+            } else if value is JSONNull {
+                try container.encodeNil()
+            } else if let value = value as? [Any] {
+                var container = container.nestedUnkeyedContainer()
+                try encode(to: &container, array: value)
+            } else if let value = value as? [String: Any] {
+                var container = container.nestedContainer(keyedBy: JSONCodingKey.self)
+                try encode(to: &container, dictionary: value)
+            } else {
+                throw encodingError(forValue: value, codingPath: container.codingPath)
+            }
+        }
+    }
+    
+    static func encode(to container: inout KeyedEncodingContainer<JSONCodingKey>, dictionary: [String: Any]) throws {
+        for (key, value) in dictionary {
+            let key = JSONCodingKey(stringValue: key)!
+            if let value = value as? Bool {
+                try container.encode(value, forKey: key)
+            } else if let value = value as? Int64 {
+                try container.encode(value, forKey: key)
+            } else if let value = value as? Double {
+                try container.encode(value, forKey: key)
+            } else if let value = value as? String {
+                try container.encode(value, forKey: key)
+            } else if value is JSONNull {
+                try container.encodeNil(forKey: key)
+            } else if let value = value as? [Any] {
+                var container = container.nestedUnkeyedContainer(forKey: key)
+                try encode(to: &container, array: value)
+            } else if let value = value as? [String: Any] {
+                var container = container.nestedContainer(keyedBy: JSONCodingKey.self, forKey: key)
+                try encode(to: &container, dictionary: value)
+            } else {
+                throw encodingError(forValue: value, codingPath: container.codingPath)
+            }
+        }
+    }
+    
+    static func encode(to container: inout SingleValueEncodingContainer, value: Any) throws {
+        if let value = value as? Bool {
+            try container.encode(value)
+        } else if let value = value as? Int64 {
+            try container.encode(value)
+        } else if let value = value as? Double {
+            try container.encode(value)
+        } else if let value = value as? String {
+            try container.encode(value)
+        } else if value is JSONNull {
+            try container.encodeNil()
+        } else {
+            throw encodingError(forValue: value, codingPath: container.codingPath)
+        }
+    }
+    
+    public required init(from decoder: Decoder) throws {
+        if var arrayContainer = try? decoder.unkeyedContainer() {
+            self.value = try JSONAny.decodeArray(from: &arrayContainer)
+        } else if var container = try? decoder.container(keyedBy: JSONCodingKey.self) {
+            self.value = try JSONAny.decodeDictionary(from: &container)
+        } else {
+            let container = try decoder.singleValueContainer()
+            self.value = try JSONAny.decode(from: container)
+        }
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        if let arr = self.value as? [Any] {
+            var container = encoder.unkeyedContainer()
+            try JSONAny.encode(to: &container, array: arr)
+        } else if let dict = self.value as? [String: Any] {
+            var container = encoder.container(keyedBy: JSONCodingKey.self)
+            try JSONAny.encode(to: &container, dictionary: dict)
+        } else {
+            var container = encoder.singleValueContainer()
+            try JSONAny.encode(to: &container, value: self.value)
+        }
+    }
+}
+//
+//func newJSONDecoder() -> JSONDecoder {
+//    let decoder = JSONDecoder()
+//    if #available(iOS 10.0, OSX 10.12, tvOS 10.0, watchOS 3.0, *) {
+//        decoder.dateDecodingStrategy = .iso8601
+//    }
+//    return decoder
+//}
+//
+//func newJSONEncoder() -> JSONEncoder {
+//    let encoder = JSONEncoder()
+//    if #available(iOS 10.0, OSX 10.12, tvOS 10.0, watchOS 3.0, *) {
+//        encoder.dateEncodingStrategy = .iso8601
+//    }
+//    return encoder
+//}

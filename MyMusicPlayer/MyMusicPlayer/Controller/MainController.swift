@@ -15,11 +15,13 @@ class MainController: UIViewController {
     var musicListTableView = UITableView()
     var musicList: MusicList!
     var listCount = 0
+    var detailMusic: DetailMusic!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationController?.isNavigationBarHidden = false
         setNavigationBar()
+
         MusicListHelper.getMusicList(success: { musicList in
             self.musicList = musicList
             print("MusicList成功：\(musicList.playlist.count)")
@@ -65,7 +67,6 @@ extension MainController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let tableViewCell = UITableViewCell()
         tableViewCell.accessoryType = .disclosureIndicator
-        print(indexPath.row)
         tableViewCell.textLabel?.text = musicList.playlist[indexPath.row].name
         tableViewCell.imageView?.sd_setImage(with: URL(string: musicList.playlist[indexPath.row].coverImgURL))
         return tableViewCell
