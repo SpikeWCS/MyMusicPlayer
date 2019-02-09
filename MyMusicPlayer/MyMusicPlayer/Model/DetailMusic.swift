@@ -30,7 +30,6 @@ struct DetailMusicHelper {
     }
 }
 
-
 struct DetailMusic: Codable {
     let playlist: DetailPlaylist
     let code: Int
@@ -38,45 +37,37 @@ struct DetailMusic: Codable {
 }
 
 struct DetailPlaylist: Codable {
-    let subscribers: [DetailCreator]
+    let subscribers: [JSONAny]
     let subscribed: Bool
     let creator: DetailCreator
     let tracks: [Track]
     let trackIDS: [TrackID]
-    let subscribedCount, cloudTrackCount: Int
-    let newImported: Bool
-    let privacy, createTime: Int
-    let highQuality: Bool
-    let userID, updateTime: Int
-    let coverImgID: Double
-    let specialType, trackCount: Int
-    let commentThreadID: String
-    let trackUpdateTime, playCount: Int
-    let coverImgURL: String
-    let adType, trackNumberUpdateTime: Int
     let ordered: Bool
-    let tags: [String]
-    let description: String
-    let status: Int
-    let name: String
-    let id, shareCount: Int
-    let coverImgIDStr: String
-    let commentCount: Int
-    
+    let tags: [JSONAny]
+    let createTime: Int
+    let highQuality: Bool
+    let userID, privacy: Int
+    let newImported: Bool
+    let trackUpdateTime, trackCount, playCount: Int
+    let coverImgURL: String
+    let specialType, updateTime: Int
+    let commentThreadID: String
+    let coverImgID, status, trackNumberUpdateTime, adType: Int
+    let subscribedCount, cloudTrackCount: Int
+    let description, name: String
+    let id, shareCount, commentCount: Int
+
     enum CodingKeys: String, CodingKey {
         case subscribers, subscribed, creator, tracks
         case trackIDS = "trackIds"
-        case subscribedCount, cloudTrackCount, newImported, privacy, createTime, highQuality
+        case ordered, tags, createTime, highQuality
         case userID = "userId"
-        case updateTime
-        case coverImgID = "coverImgId"
-        case specialType, trackCount
-        case commentThreadID = "commentThreadId"
-        case trackUpdateTime, playCount
+        case privacy, newImported, trackUpdateTime, trackCount, playCount
         case coverImgURL = "coverImgUrl"
-        case adType, trackNumberUpdateTime, ordered, tags, description, status, name, id, shareCount
-        case coverImgIDStr = "coverImgId_str"
-        case commentCount
+        case specialType, updateTime
+        case commentThreadID = "commentThreadId"
+        case coverImgID = "coverImgId"
+        case status, trackNumberUpdateTime, adType, subscribedCount, cloudTrackCount, description, name, id, shareCount, commentCount
     }
 }
 
@@ -92,11 +83,10 @@ struct DetailCreator: Codable {
     let backgroundURL: String
     let authority: Int
     let mutual: Bool
-    let expertTags, experts: JSONNull?
+    let expertTags, experts: String
     let djStatus, vipType: Int
-    let remarkName: JSONNull?
-    let avatarImgIDStr, backgroundImgIDStr, creatorAvatarImgIDStr: String
-    
+    let remarkName, backgroundImgIDStr, avatarImgIDStr, creatorAvatarImgIDStr: String
+
     enum CodingKeys: String, CodingKey {
         case defaultAvatar, province, authStatus, followed
         case avatarURL = "avatarUrl"
@@ -107,8 +97,8 @@ struct DetailCreator: Codable {
         case backgroundImgID = "backgroundImgId"
         case backgroundURL = "backgroundUrl"
         case authority, mutual, expertTags, experts, djStatus, vipType, remarkName
-        case avatarImgIDStr = "avatarImgIdStr"
         case backgroundImgIDStr = "backgroundImgIdStr"
+        case avatarImgIDStr = "avatarImgIdStr"
         case creatorAvatarImgIDStr = "avatarImgId_str"
     }
 }
@@ -123,25 +113,22 @@ struct Track: Codable {
     let ar: [Ar]
     let alia: [String]
     let pop, st: Int
-    let rt: String?
+    let rt: String
     let fee, v: Int
-    let crbt: String?
-    let cf: String
+    let crbt, cf: String
     let al: Al
     let dt: Int
-    let h, m, l: H?
-    let a: JSONNull?
-    let cd: String
+    let h, m, l: H
+    let a, cd: String
     let no: Int
-    let rtURL: JSONNull?
+    let rtURL: String
     let ftype: Int
     let rtUrls: [JSONAny]
-    let djID, copyright, sID, mv: Int
-    let mst, cp: Int
-    let rurl: JSONNull?
-    let rtype, publishTime: Int
-    let tns: [String]?
-    
+    let djID, copyright, sID, mst: Int
+    let cp, mv, rtype: Int
+    let rurl: String
+    let publishTime: Int
+
     enum CodingKeys: String, CodingKey {
         case name, id, pst, t, ar, alia, pop, st, rt, fee, v, crbt, cf, al, dt, h, m, l, a, cd, no
         case rtURL = "rtUrl"
@@ -149,24 +136,23 @@ struct Track: Codable {
         case djID = "djId"
         case copyright
         case sID = "s_id"
-        case mv, mst, cp, rurl, rtype, publishTime, tns
+        case mst, cp, mv, rtype, rurl, publishTime
     }
 }
 
 struct Al: Codable {
     let id: Int
-    let name: String?
-    let picURL: String?
-    let tns: [String]
-    let picStr: String?
+    let name: String
+    let picURL: String
+    let tns: [JSONAny]
     let pic: Double
-    
+    let picStr: String?
+
     enum CodingKeys: String, CodingKey {
         case id, name
         case picURL = "picUrl"
-        case tns
+        case tns, pic
         case picStr = "pic_str"
-        case pic
     }
 }
 
@@ -198,18 +184,18 @@ extension DetailMusic {
     init(data: Data) throws {
         self = try newJSONDecoder().decode(DetailMusic.self, from: data)
     }
-    
+
     init(_ json: String, using encoding: String.Encoding = .utf8) throws {
         guard let data = json.data(using: encoding) else {
             throw NSError(domain: "JSONDecoding", code: 0, userInfo: nil)
         }
         try self.init(data: data)
     }
-    
+
     init(fromURL url: URL) throws {
         try self.init(data: try Data(contentsOf: url))
     }
-    
+
     func with(
         playlist: DetailPlaylist? = nil,
         code: Int? = nil,
@@ -221,11 +207,11 @@ extension DetailMusic {
             privileges: privileges ?? self.privileges
         )
     }
-    
+
     func jsonData() throws -> Data {
         return try newJSONEncoder().encode(self)
     }
-    
+
     func jsonString(encoding: String.Encoding = .utf8) throws -> String? {
         return String(data: try self.jsonData(), encoding: encoding)
     }
@@ -235,49 +221,48 @@ extension DetailPlaylist {
     init(data: Data) throws {
         self = try newJSONDecoder().decode(DetailPlaylist.self, from: data)
     }
-    
+
     init(_ json: String, using encoding: String.Encoding = .utf8) throws {
         guard let data = json.data(using: encoding) else {
             throw NSError(domain: "JSONDecoding", code: 0, userInfo: nil)
         }
         try self.init(data: data)
     }
-    
+
     init(fromURL url: URL) throws {
         try self.init(data: try Data(contentsOf: url))
     }
-    
+
     func with(
-        subscribers: [DetailCreator]? = nil,
+        subscribers: [JSONAny]? = nil,
         subscribed: Bool? = nil,
         creator: DetailCreator? = nil,
         tracks: [Track]? = nil,
         trackIDS: [TrackID]? = nil,
-        subscribedCount: Int? = nil,
-        cloudTrackCount: Int? = nil,
-        newImported: Bool? = nil,
-        privacy: Int? = nil,
+        ordered: Bool? = nil,
+        tags: [JSONAny]? = nil,
         createTime: Int? = nil,
         highQuality: Bool? = nil,
         userID: Int? = nil,
-        updateTime: Int? = nil,
-        coverImgID: Double? = nil,
-        specialType: Int? = nil,
-        trackCount: Int? = nil,
-        commentThreadID: String? = nil,
+        privacy: Int? = nil,
+        newImported: Bool? = nil,
         trackUpdateTime: Int? = nil,
+        trackCount: Int? = nil,
         playCount: Int? = nil,
         coverImgURL: String? = nil,
-        adType: Int? = nil,
-        trackNumberUpdateTime: Int? = nil,
-        ordered: Bool? = nil,
-        tags: [String]? = nil,
-        description: String? = nil,
+        specialType: Int? = nil,
+        updateTime: Int? = nil,
+        commentThreadID: String? = nil,
+        coverImgID: Int? = nil,
         status: Int? = nil,
+        trackNumberUpdateTime: Int? = nil,
+        adType: Int? = nil,
+        subscribedCount: Int? = nil,
+        cloudTrackCount: Int? = nil,
+        description: String? = nil,
         name: String? = nil,
         id: Int? = nil,
         shareCount: Int? = nil,
-        coverImgIDStr: String? = nil,
         commentCount: Int? = nil
         ) -> DetailPlaylist {
         return DetailPlaylist(
@@ -286,39 +271,38 @@ extension DetailPlaylist {
             creator: creator ?? self.creator,
             tracks: tracks ?? self.tracks,
             trackIDS: trackIDS ?? self.trackIDS,
-            subscribedCount: subscribedCount ?? self.subscribedCount,
-            cloudTrackCount: cloudTrackCount ?? self.cloudTrackCount,
-            newImported: newImported ?? self.newImported,
-            privacy: privacy ?? self.privacy,
+            ordered: ordered ?? self.ordered,
+            tags: tags ?? self.tags,
             createTime: createTime ?? self.createTime,
             highQuality: highQuality ?? self.highQuality,
             userID: userID ?? self.userID,
-            updateTime: updateTime ?? self.updateTime,
-            coverImgID: coverImgID ?? self.coverImgID,
-            specialType: specialType ?? self.specialType,
-            trackCount: trackCount ?? self.trackCount,
-            commentThreadID: commentThreadID ?? self.commentThreadID,
+            privacy: privacy ?? self.privacy,
+            newImported: newImported ?? self.newImported,
             trackUpdateTime: trackUpdateTime ?? self.trackUpdateTime,
+            trackCount: trackCount ?? self.trackCount,
             playCount: playCount ?? self.playCount,
             coverImgURL: coverImgURL ?? self.coverImgURL,
-            adType: adType ?? self.adType,
-            trackNumberUpdateTime: trackNumberUpdateTime ?? self.trackNumberUpdateTime,
-            ordered: ordered ?? self.ordered,
-            tags: tags ?? self.tags,
-            description: description ?? self.description,
+            specialType: specialType ?? self.specialType,
+            updateTime: updateTime ?? self.updateTime,
+            commentThreadID: commentThreadID ?? self.commentThreadID,
+            coverImgID: coverImgID ?? self.coverImgID,
             status: status ?? self.status,
+            trackNumberUpdateTime: trackNumberUpdateTime ?? self.trackNumberUpdateTime,
+            adType: adType ?? self.adType,
+            subscribedCount: subscribedCount ?? self.subscribedCount,
+            cloudTrackCount: cloudTrackCount ?? self.cloudTrackCount,
+            description: description ?? self.description,
             name: name ?? self.name,
             id: id ?? self.id,
             shareCount: shareCount ?? self.shareCount,
-            coverImgIDStr: coverImgIDStr ?? self.coverImgIDStr,
             commentCount: commentCount ?? self.commentCount
         )
     }
-    
+
     func jsonData() throws -> Data {
         return try newJSONEncoder().encode(self)
     }
-    
+
     func jsonString(encoding: String.Encoding = .utf8) throws -> String? {
         return String(data: try self.jsonData(), encoding: encoding)
     }
@@ -328,18 +312,18 @@ extension DetailCreator {
     init(data: Data) throws {
         self = try newJSONDecoder().decode(DetailCreator.self, from: data)
     }
-    
+
     init(_ json: String, using encoding: String.Encoding = .utf8) throws {
         guard let data = json.data(using: encoding) else {
             throw NSError(domain: "JSONDecoding", code: 0, userInfo: nil)
         }
         try self.init(data: data)
     }
-    
+
     init(fromURL url: URL) throws {
         try self.init(data: try Data(contentsOf: url))
     }
-    
+
     func with(
         defaultAvatar: Bool? = nil,
         province: Int? = nil,
@@ -361,13 +345,13 @@ extension DetailCreator {
         backgroundURL: String? = nil,
         authority: Int? = nil,
         mutual: Bool? = nil,
-        expertTags: JSONNull?? = nil,
-        experts: JSONNull?? = nil,
+        expertTags: String? = nil,
+        experts: String? = nil,
         djStatus: Int? = nil,
         vipType: Int? = nil,
-        remarkName: JSONNull?? = nil,
-        avatarImgIDStr: String? = nil,
+        remarkName: String? = nil,
         backgroundImgIDStr: String? = nil,
+        avatarImgIDStr: String? = nil,
         creatorAvatarImgIDStr: String? = nil
         ) -> DetailCreator {
         return DetailCreator(
@@ -396,16 +380,16 @@ extension DetailCreator {
             djStatus: djStatus ?? self.djStatus,
             vipType: vipType ?? self.vipType,
             remarkName: remarkName ?? self.remarkName,
-            avatarImgIDStr: avatarImgIDStr ?? self.avatarImgIDStr,
             backgroundImgIDStr: backgroundImgIDStr ?? self.backgroundImgIDStr,
+            avatarImgIDStr: avatarImgIDStr ?? self.avatarImgIDStr,
             creatorAvatarImgIDStr: creatorAvatarImgIDStr ?? self.creatorAvatarImgIDStr
         )
     }
-    
+
     func jsonData() throws -> Data {
         return try newJSONEncoder().encode(self)
     }
-    
+
     func jsonString(encoding: String.Encoding = .utf8) throws -> String? {
         return String(data: try self.jsonData(), encoding: encoding)
     }
@@ -415,18 +399,18 @@ extension TrackID {
     init(data: Data) throws {
         self = try newJSONDecoder().decode(TrackID.self, from: data)
     }
-    
+
     init(_ json: String, using encoding: String.Encoding = .utf8) throws {
         guard let data = json.data(using: encoding) else {
             throw NSError(domain: "JSONDecoding", code: 0, userInfo: nil)
         }
         try self.init(data: data)
     }
-    
+
     init(fromURL url: URL) throws {
         try self.init(data: try Data(contentsOf: url))
     }
-    
+
     func with(
         id: Int? = nil,
         v: Int? = nil
@@ -436,11 +420,11 @@ extension TrackID {
             v: v ?? self.v
         )
     }
-    
+
     func jsonData() throws -> Data {
         return try newJSONEncoder().encode(self)
     }
-    
+
     func jsonString(encoding: String.Encoding = .utf8) throws -> String? {
         return String(data: try self.jsonData(), encoding: encoding)
     }
@@ -450,18 +434,18 @@ extension Track {
     init(data: Data) throws {
         self = try newJSONDecoder().decode(Track.self, from: data)
     }
-    
+
     init(_ json: String, using encoding: String.Encoding = .utf8) throws {
         guard let data = json.data(using: encoding) else {
             throw NSError(domain: "JSONDecoding", code: 0, userInfo: nil)
         }
         try self.init(data: data)
     }
-    
+
     init(fromURL url: URL) throws {
         try self.init(data: try Data(contentsOf: url))
     }
-    
+
     func with(
         name: String? = nil,
         id: Int? = nil,
@@ -471,32 +455,31 @@ extension Track {
         alia: [String]? = nil,
         pop: Int? = nil,
         st: Int? = nil,
-        rt: String?? = nil,
+        rt: String? = nil,
         fee: Int? = nil,
         v: Int? = nil,
-        crbt: String?? = nil,
+        crbt: String? = nil,
         cf: String? = nil,
         al: Al? = nil,
         dt: Int? = nil,
-        h: H?? = nil,
-        m: H?? = nil,
-        l: H?? = nil,
-        a: JSONNull?? = nil,
+        h: H? = nil,
+        m: H? = nil,
+        l: H? = nil,
+        a: String? = nil,
         cd: String? = nil,
         no: Int? = nil,
-        rtURL: JSONNull?? = nil,
+        rtURL: String? = nil,
         ftype: Int? = nil,
         rtUrls: [JSONAny]? = nil,
         djID: Int? = nil,
         copyright: Int? = nil,
         sID: Int? = nil,
-        mv: Int? = nil,
         mst: Int? = nil,
         cp: Int? = nil,
-        rurl: JSONNull?? = nil,
+        mv: Int? = nil,
         rtype: Int? = nil,
-        publishTime: Int? = nil,
-        tns: [String]?? = nil
+        rurl: String? = nil,
+        publishTime: Int? = nil
         ) -> Track {
         return Track(
             name: name ?? self.name,
@@ -526,20 +509,19 @@ extension Track {
             djID: djID ?? self.djID,
             copyright: copyright ?? self.copyright,
             sID: sID ?? self.sID,
-            mv: mv ?? self.mv,
             mst: mst ?? self.mst,
             cp: cp ?? self.cp,
-            rurl: rurl ?? self.rurl,
+            mv: mv ?? self.mv,
             rtype: rtype ?? self.rtype,
-            publishTime: publishTime ?? self.publishTime,
-            tns: tns ?? self.tns
+            rurl: rurl ?? self.rurl,
+            publishTime: publishTime ?? self.publishTime
         )
     }
-    
+
     func jsonData() throws -> Data {
         return try newJSONEncoder().encode(self)
     }
-    
+
     func jsonString(encoding: String.Encoding = .utf8) throws -> String? {
         return String(data: try self.jsonData(), encoding: encoding)
     }
@@ -549,40 +531,40 @@ extension Al {
     init(data: Data) throws {
         self = try newJSONDecoder().decode(Al.self, from: data)
     }
-    
+
     init(_ json: String, using encoding: String.Encoding = .utf8) throws {
         guard let data = json.data(using: encoding) else {
             throw NSError(domain: "JSONDecoding", code: 0, userInfo: nil)
         }
         try self.init(data: data)
     }
-    
+
     init(fromURL url: URL) throws {
         try self.init(data: try Data(contentsOf: url))
     }
-    
+
     func with(
         id: Int? = nil,
-        name: String?? = nil,
-        picURL: String?? = nil,
-        tns: [String]? = nil,
-        picStr: String?? = nil,
-        pic: Double? = nil
+        name: String? = nil,
+        picURL: String? = nil,
+        tns: [JSONAny]? = nil,
+        pic: Double? = nil,
+        picStr: String?? = nil
         ) -> Al {
         return Al(
             id: id ?? self.id,
             name: name ?? self.name,
             picURL: picURL ?? self.picURL,
             tns: tns ?? self.tns,
-            picStr: picStr ?? self.picStr,
-            pic: pic ?? self.pic
+            pic: pic ?? self.pic,
+            picStr: picStr ?? self.picStr
         )
     }
-    
+
     func jsonData() throws -> Data {
         return try newJSONEncoder().encode(self)
     }
-    
+
     func jsonString(encoding: String.Encoding = .utf8) throws -> String? {
         return String(data: try self.jsonData(), encoding: encoding)
     }
@@ -592,18 +574,18 @@ extension Ar {
     init(data: Data) throws {
         self = try newJSONDecoder().decode(Ar.self, from: data)
     }
-    
+
     init(_ json: String, using encoding: String.Encoding = .utf8) throws {
         guard let data = json.data(using: encoding) else {
             throw NSError(domain: "JSONDecoding", code: 0, userInfo: nil)
         }
         try self.init(data: data)
     }
-    
+
     init(fromURL url: URL) throws {
         try self.init(data: try Data(contentsOf: url))
     }
-    
+
     func with(
         id: Int? = nil,
         name: String? = nil,
@@ -617,11 +599,11 @@ extension Ar {
             alias: alias ?? self.alias
         )
     }
-    
+
     func jsonData() throws -> Data {
         return try newJSONEncoder().encode(self)
     }
-    
+
     func jsonString(encoding: String.Encoding = .utf8) throws -> String? {
         return String(data: try self.jsonData(), encoding: encoding)
     }
@@ -631,18 +613,18 @@ extension H {
     init(data: Data) throws {
         self = try newJSONDecoder().decode(H.self, from: data)
     }
-    
+
     init(_ json: String, using encoding: String.Encoding = .utf8) throws {
         guard let data = json.data(using: encoding) else {
             throw NSError(domain: "JSONDecoding", code: 0, userInfo: nil)
         }
         try self.init(data: data)
     }
-    
+
     init(fromURL url: URL) throws {
         try self.init(data: try Data(contentsOf: url))
     }
-    
+
     func with(
         br: Int? = nil,
         fid: Int? = nil,
@@ -656,11 +638,11 @@ extension H {
             vd: vd ?? self.vd
         )
     }
-    
+
     func jsonData() throws -> Data {
         return try newJSONEncoder().encode(self)
     }
-    
+
     func jsonString(encoding: String.Encoding = .utf8) throws -> String? {
         return String(data: try self.jsonData(), encoding: encoding)
     }
@@ -670,18 +652,18 @@ extension Privilege {
     init(data: Data) throws {
         self = try newJSONDecoder().decode(Privilege.self, from: data)
     }
-    
+
     init(_ json: String, using encoding: String.Encoding = .utf8) throws {
         guard let data = json.data(using: encoding) else {
             throw NSError(domain: "JSONDecoding", code: 0, userInfo: nil)
         }
         try self.init(data: data)
     }
-    
+
     init(fromURL url: URL) throws {
         try self.init(data: try Data(contentsOf: url))
     }
-    
+
     func with(
         id: Int? = nil,
         fee: Int? = nil,
@@ -717,11 +699,11 @@ extension Privilege {
             preSell: preSell ?? self.preSell
         )
     }
-    
+
     func jsonData() throws -> Data {
         return try newJSONEncoder().encode(self)
     }
-    
+
     func jsonString(encoding: String.Encoding = .utf8) throws -> String? {
         return String(data: try self.jsonData(), encoding: encoding)
     }
@@ -730,24 +712,24 @@ extension Privilege {
 // MARK: Encode/decode helpers
 
 class JSONNull: Codable, Hashable {
-    
+
     public static func == (lhs: JSONNull, rhs: JSONNull) -> Bool {
         return true
     }
-    
+
     public var hashValue: Int {
         return 0
     }
-    
+
     public init() {}
-    
+
     public required init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         if !container.decodeNil() {
             throw DecodingError.typeMismatch(JSONNull.self, DecodingError.Context(codingPath: decoder.codingPath, debugDescription: "Wrong type for JSONNull"))
         }
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         try container.encodeNil()
@@ -756,19 +738,19 @@ class JSONNull: Codable, Hashable {
 
 class JSONCodingKey: CodingKey {
     let key: String
-    
+
     required init?(intValue: Int) {
         return nil
     }
-    
+
     required init?(stringValue: String) {
         key = stringValue
     }
-    
+
     var intValue: Int? {
         return nil
     }
-    
+
     var stringValue: String {
         return key
     }
@@ -776,17 +758,17 @@ class JSONCodingKey: CodingKey {
 
 class JSONAny: Codable {
     let value: Any
-    
+
     static func decodingError(forCodingPath codingPath: [CodingKey]) -> DecodingError {
         let context = DecodingError.Context(codingPath: codingPath, debugDescription: "Cannot decode JSONAny")
         return DecodingError.typeMismatch(JSONAny.self, context)
     }
-    
+
     static func encodingError(forValue value: Any, codingPath: [CodingKey]) -> EncodingError {
         let context = EncodingError.Context(codingPath: codingPath, debugDescription: "Cannot encode JSONAny")
         return EncodingError.invalidValue(value, context)
     }
-    
+
     static func decode(from container: SingleValueDecodingContainer) throws -> Any {
         if let value = try? container.decode(Bool.self) {
             return value
@@ -805,7 +787,7 @@ class JSONAny: Codable {
         }
         throw decodingError(forCodingPath: container.codingPath)
     }
-    
+
     static func decode(from container: inout UnkeyedDecodingContainer) throws -> Any {
         if let value = try? container.decode(Bool.self) {
             return value
@@ -832,7 +814,7 @@ class JSONAny: Codable {
         }
         throw decodingError(forCodingPath: container.codingPath)
     }
-    
+
     static func decode(from container: inout KeyedDecodingContainer<JSONCodingKey>, forKey key: JSONCodingKey) throws -> Any {
         if let value = try? container.decode(Bool.self, forKey: key) {
             return value
@@ -859,7 +841,7 @@ class JSONAny: Codable {
         }
         throw decodingError(forCodingPath: container.codingPath)
     }
-    
+
     static func decodeArray(from container: inout UnkeyedDecodingContainer) throws -> [Any] {
         var arr: [Any] = []
         while !container.isAtEnd {
@@ -868,7 +850,7 @@ class JSONAny: Codable {
         }
         return arr
     }
-    
+
     static func decodeDictionary(from container: inout KeyedDecodingContainer<JSONCodingKey>) throws -> [String: Any] {
         var dict = [String: Any]()
         for key in container.allKeys {
@@ -877,7 +859,7 @@ class JSONAny: Codable {
         }
         return dict
     }
-    
+
     static func encode(to container: inout UnkeyedEncodingContainer, array: [Any]) throws {
         for value in array {
             if let value = value as? Bool {
@@ -901,7 +883,7 @@ class JSONAny: Codable {
             }
         }
     }
-    
+
     static func encode(to container: inout KeyedEncodingContainer<JSONCodingKey>, dictionary: [String: Any]) throws {
         for (key, value) in dictionary {
             let key = JSONCodingKey(stringValue: key)!
@@ -926,7 +908,7 @@ class JSONAny: Codable {
             }
         }
     }
-    
+
     static func encode(to container: inout SingleValueEncodingContainer, value: Any) throws {
         if let value = value as? Bool {
             try container.encode(value)
@@ -942,7 +924,7 @@ class JSONAny: Codable {
             throw encodingError(forValue: value, codingPath: container.codingPath)
         }
     }
-    
+
     public required init(from decoder: Decoder) throws {
         if var arrayContainer = try? decoder.unkeyedContainer() {
             self.value = try JSONAny.decodeArray(from: &arrayContainer)
@@ -953,7 +935,7 @@ class JSONAny: Codable {
             self.value = try JSONAny.decode(from: container)
         }
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         if let arr = self.value as? [Any] {
             var container = encoder.unkeyedContainer()
@@ -967,19 +949,4 @@ class JSONAny: Codable {
         }
     }
 }
-//
-//func newJSONDecoder() -> JSONDecoder {
-//    let decoder = JSONDecoder()
-//    if #available(iOS 10.0, OSX 10.12, tvOS 10.0, watchOS 3.0, *) {
-//        decoder.dateDecodingStrategy = .iso8601
-//    }
-//    return decoder
-//}
-//
-//func newJSONEncoder() -> JSONEncoder {
-//    let encoder = JSONEncoder()
-//    if #available(iOS 10.0, OSX 10.12, tvOS 10.0, watchOS 3.0, *) {
-//        encoder.dateEncodingStrategy = .iso8601
-//    }
-//    return encoder
-//}
+
