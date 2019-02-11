@@ -75,6 +75,7 @@ extension DetailMusicController: UITableViewDelegate, UITableViewDataSource {
         return 50
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        // TODO:
+        PlayedSong.id = detailMusic.detailMusicInfo[indexPath.row].id
+        self.navigationController?.pushViewController(PlayerViewController(), animated: true)
     }
 }
