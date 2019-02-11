@@ -13,6 +13,7 @@
 		741403FD220D7B730025180D /* MusicList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 741403FC220D7B730025180D /* MusicList.swift */; };
 		741403FF220DBE300025180D /* DetailMusicController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 741403FE220DBE300025180D /* DetailMusicController.swift */; };
 		74140401220DBF760025180D /* DetailMusic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74140400220DBF760025180D /* DetailMusic.swift */; };
+		748C556D22100D5E009CBE31 /* DetailMuiscListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 748C556C22100D5E009CBE31 /* DetailMuiscListTableViewCell.swift */; };
 		74F9BF782201CACA00085E73 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74F9BF772201CACA00085E73 /* AppDelegate.swift */; };
 		74F9BF7A2201CACA00085E73 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74F9BF792201CACA00085E73 /* ViewController.swift */; };
 		74F9BF7D2201CACA00085E73 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 74F9BF7B2201CACA00085E73 /* Main.storyboard */; };
@@ -52,6 +53,7 @@
 		741403FC220D7B730025180D /* MusicList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicList.swift; sourceTree = "<group>"; };
 		741403FE220DBE300025180D /* DetailMusicController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailMusicController.swift; sourceTree = "<group>"; };
 		74140400220DBF760025180D /* DetailMusic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailMusic.swift; sourceTree = "<group>"; };
+		748C556C22100D5E009CBE31 /* DetailMuiscListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailMuiscListTableViewCell.swift; sourceTree = "<group>"; };
 		74F9BF742201CACA00085E73 /* MyMusicPlayer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MyMusicPlayer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		74F9BF772201CACA00085E73 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		74F9BF792201CACA00085E73 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -197,6 +199,7 @@
 			isa = PBXGroup;
 			children = (
 				74F9BFAD22059CD900085E73 /* MusicListTableViewCell.swift */,
+				748C556C22100D5E009CBE31 /* DetailMuiscListTableViewCell.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -378,6 +381,7 @@
 				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
 				"${BUILT_PRODUCTS_DIR}/MJRefresh/MJRefresh.framework",
 				"${BUILT_PRODUCTS_DIR}/SDWebImage/SDWebImage.framework",
+				"${BUILT_PRODUCTS_DIR}/SwiftyJSON/SwiftyJSON.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
@@ -386,6 +390,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MJRefresh.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDWebImage.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyJSON.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -453,6 +458,7 @@
 				74F9BFAA2202DA3800085E73 /* MyAccountController.swift in Sources */,
 				741403FD220D7B730025180D /* MusicList.swift in Sources */,
 				741403FF220DBE300025180D /* DetailMusicController.swift in Sources */,
+				748C556D22100D5E009CBE31 /* DetailMuiscListTableViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

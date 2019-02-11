@@ -8,7 +8,8 @@ target 'MyMusicPlayer' do
 	pod 'Alamofire'
 	pod 'MJRefresh' 
 	pod 'SwiftLint'
-
+	pod 'SwiftLint'
+	pod 'SwiftyJSON'
   # Pods for MyMusicPlayer
 
   target 'MyMusicPlayerTests' do
